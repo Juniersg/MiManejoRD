@@ -1,244 +1,135 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mi Finanzas Personales</title>
+{% extends "base.html" %}
 
-  <!-- Bootstrap 5 CSS (CDN) -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+{% block title %}Dashboard - Mi Finanzas{% endblock %}
 
-  <!-- Font Awesome (opcional para iconos) -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+{% block content %}
 
-  <style>
-    /* Estilos suaves para el MVP */
-    :root{
-      --accent: #2b8aef; /* azul acento */
-      --muted: #6c757d;
-    }
-    body { background:#f8f9fa; color:#212529; }
-    .card-metric { border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
-    .accent { color: var(--accent); }
-    .small-muted { font-size: .85rem; color: var(--muted); }
-    /* Mantener suficiente espacio en móvil */
-    .main-padding { padding: 1rem; }
-  </style>
-</head>
-<body>
-
-  <!-- HEADER / NAVBAR -->
-  <header class="sticky-top bg-white shadow-sm">
-    <nav class="navbar navbar-expand-lg container">
-      <a class="navbar-brand d-flex align-items-center" href="#">
-        <i class="fa-solid fa-coins accent me-2"></i>
-        <span class="fw-semibold">Mi Finanzas Personales</span>
-      </a>
-
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Alternar navegación">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="mainNav">
-        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-          <!-- Enlaces del menú (integrar rutas Flask/links luego) -->
-          <li class="nav-item"><a class="nav-link" href="#">Cuentas</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Transacciones</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Deudas</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Reportes</a></li>
-        </ul>
-      </div>
-    </nav>
-  </header>
-
-  <!-- MAIN -->
-  <main class="container main-padding" role="main">
-    <!-- Top: saludo / resumen -->
-    <section class="mb-3">
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <h2 class="h5 mb-0">Resumen</h2>
-          <p class="small-muted mb-0">Visión rápida de tus finanzas</p>
-        </div>
-        <!-- botón acción rápido (ej. agregar transacción) -->
-        <div>
-          <button class="btn btn-primary btn-sm">
-            <i class="fa-solid fa-plus me-1"></i> Nueva transacción
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- DASHBOARD CARDS -->
-    <section class="mb-4">
-      <div class="row g-3">
-        <!-- Saldo total -->
-        <div class="col-12 col-sm-6 col-md-3">
-          <div class="card card-metric p-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="small-muted">Saldo total actual</div>
-                <div class="h5 fw-bold mt-1">$ 12,345.67</div>
-              </div>
-              <div class="text-end">
-                <i class="fa-solid fa-wallet fa-2x accent"></i>
-                <div class="small-muted">Actualizado</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Gastos del mes -->
-        <div class="col-12 col-sm-6 col-md-3">
-          <div class="card card-metric p-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="small-muted">Gastos del mes</div>
-                <div class="h5 fw-bold mt-1"> $ 1,234.00 </div>
-              </div>
-              <div class="text-end">
-                <i class="fa-solid fa-chart-line fa-2x accent"></i>
-                <div class="small-muted">Ver detalles</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Deudas activas -->
-        <div class="col-12 col-sm-6 col-md-3">
-          <div class="card card-metric p-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="small-muted">Deudas activas</div>
-                <div class="h5 fw-bold mt-1">$ 3,500.00</div>
-              </div>
-              <div class="text-end">
-                <i class="fa-solid fa-hand-holding-dollar fa-2x accent"></i>
-                <div class="small-muted">3 cuentas</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Espacio para otra métrica -->
-        <div class="col-12 col-sm-6 col-md-3">
-          <div class="card card-metric p-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="small-muted">Objetivo ahorro</div>
-                <div class="h5 fw-bold mt-1">$ 5,000</div>
-              </div>
-              <div class="text-end">
-                <i class="fa-solid fa-bullseye fa-2x accent"></i>
-                <div class="small-muted">{{data.Porcentaje}} alcanzado</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CONTENIDO: Grafico + lista rápida -->
-    <section class="row g-3 mb-4">
-      <!-- Gráfico (placeholder para Chart.js) -->
-      <div class="col-12 col-lg-7">
-        <div class="card card-metric p-3 h-100">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <h3 class="h6 mb-0">Distribución de gastos</h3>
-            <small class="small-muted">Últimos 30 días</small>
-          </div>
-
-          <!-- Canvas para integrar Chart.js más adelante -->
-          <div style="height:260px;">
-            <canvas id="gastosChart" aria-label="Gráfico distribución de gastos"></canvas>
-          </div>
-
-          <!-- Comentario: integrar Chart.js desde frontend o backend -->
-          <!-- FUTURE: rellenar el canvas con datos reales via JS (fetch a /api/...) -->
-        </div>
-      </div>
-
-      <!-- Lista rápida: últimas transacciones -->
-      <div class="col-12 col-lg-5">
-        <div class="card card-metric p-3 h-100">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <h3 class="h6 mb-0">Últimas transacciones</h3>
-            <small class="small-muted">5 recientes</small>
-          </div>
-
-          <ul class="list-group list-group-flush">
-            <!-- Items de ejemplo (en producción, rellenar desde backend) -->
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <div>
-                <div class="fw-semibold">Supermercado</div>
-                <div class="small-muted">Comida • 2025-09-01</div>
-              </div>
-              <div class="text-danger">- $45.20</div>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <div>
-                <div class="fw-semibold">Pago nómina</div>
-                <div class="small-muted">Ingreso • 2025-09-01</div>
-              </div>
-              <div class="text-success">+ $1,200.00</div>
-            </li>
-            <!-- FUTURE: iterar con Jinja2 / render desde Flask -->
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- ENLACES RAPIDOS / MENU SECUNDARIO -->
-    <section class="mb-4">
-      <div class="card card-metric p-3">
-        <div class="d-flex flex-wrap gap-2">
-          <a class="btn btn-outline-primary btn-sm" href="#">Ir a Cuentas</a>
-          <a class="btn btn-outline-primary btn-sm" href="#">Ir a Transacciones</a>
-          <a class="btn btn-outline-primary btn-sm" href="#">Ir a Deudas</a>
-          <a class="btn btn-outline-secondary btn-sm" href="#">Reportes</a>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="bg-white border-top small-muted py-3 mt-4">
-    <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
-      <div>© 2025 Mi Finanzas Personales. Todos los derechos reservados.</div>
-      <div class="small-muted">Contacto: soporte@mi-finanzas.local</div>
+<!-- Resumen -->
+<section class="mb-3">
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <h2 class="h5 mb-0">Resumen</h2>
+      <p class="small-muted mb-0">Visión rápida de tus finanzas</p>
     </div>
-  </footer>
+    <div>
+      <button class="btn btn-primary btn-sm">
+        <i class="fa-solid fa-plus me-1"></i> Nueva transacción
+      </button>
+    </div>
+  </div>
+</section>
 
-  <!-- Bootstrap JS (Popper incluido) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Dashboard cards -->
+<section class="mb-4">
+  <div class="row g-3">
+    <div class="col-12 col-sm-6 col-md-3">
+      <div class="card card-metric p-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="small-muted">Saldo total actual</div>
+            <div class="h5 fw-bold mt-1">$ 12,345.67</div>
+          </div>
+          <div class="text-end">
+            <i class="fa-solid fa-wallet fa-2x accent"></i>
+            <div class="small-muted">Actualizado</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3">
+      <div class="card card-metric p-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="small-muted">Gastos del mes</div>
+            <div class="h5 fw-bold mt-1">$ 1,234.00</div>
+          </div>
+          <div class="text-end">
+            <i class="fa-solid fa-chart-line fa-2x accent"></i>
+            <div class="small-muted">Ver detalles</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3">
+      <div class="card card-metric p-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="small-muted">Deudas activas</div>
+            <div class="h5 fw-bold mt-1">$ 3,500.00</div>
+          </div>
+          <div class="text-end">
+            <i class="fa-solid fa-hand-holding-dollar fa-2x accent"></i>
+            <div class="small-muted">3 cuentas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-3">
+      <div class="card card-metric p-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="small-muted">Objetivo ahorro</div>
+            <div class="h5 fw-bold mt-1">$ 5,000</div>
+          </div>
+          <div class="text-end">
+            <i class="fa-solid fa-bullseye fa-2x accent"></i>
+            <div class="small-muted">70% alcanzado</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <!-- Chart.js (opcional; comentar si no se integra aún) -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script>
-    // Placeholder: ejemplo básico para demostrar el gráfico (remplazar con datos reales)
-    // En producción, obtener datos con fetch('/api/gastos') y renderizar.
-    const ctx = document.getElementById('gastosChart');
-    if (ctx) {
-      const gastosChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Alimentación','Transporte','Hogar','Ocio','Otros'],
-          datasets: [{
-            label: 'Gastos',
-            data: [400, 150, 200, 100, 50],
-            // Los colores los decide Chart.js por defecto aquí; personalizar si se desea
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'bottom' }
-          }
-        }
-      });
-    }
-  </script>
+<!-- Gráfico y lista -->
+<section class="row g-3 mb-4">
+  <div class="col-12 col-lg-7">
+    <div class="card card-metric p-3 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h3 class="h6 mb-0">Distribución de gastos</h3>
+        <small class="small-muted">Últimos 30 días</small>
+      </div>
+      <div style="height:260px;">
+        <canvas id="gastosChart"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-5">
+    <div class="card card-metric p-3 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h3 class="h6 mb-0">Últimas transacciones</h3>
+        <small class="small-muted">5 recientes</small>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <div class="fw-semibold">Supermercado</div>
+            <div class="small-muted">Comida • 2025-09-01</div>
+          </div>
+          <div class="text-danger">- $45.20</div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <div class="fw-semibold">Pago nómina</div>
+            <div class="small-muted">Ingreso • 2025-09-01</div>
+          </div>
+          <div class="text-success">+ $1,200.00</div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
 
-</body>
-</html>
+<!-- Enlaces rápidos -->
+<section class="mb-4">
+  <div class="card card-metric p-3">
+    <div class="d-flex flex-wrap gap-2">
+      <a class="btn btn-outline-primary btn-sm" href="#">Ir a Cuentas</a>
+      <a class="btn btn-outline-primary btn-sm" href="#">Ir a Transacciones</a>
+      <a class="btn btn-outline-primary btn-sm" href="#">Ir a Deudas</a>
+      <a class="btn btn-outline-secondary btn-sm" href="#">Reportes</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

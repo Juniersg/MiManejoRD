@@ -1,0 +1,27 @@
+:root {
+  --accent: #2b8aef;
+  --muted: #6c757d;
+}
+
+body {
+  background: #f8f9fa;
+  color: #212529;
+}
+
+.card-metric {
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.accent {
+  color: var(--accent);
+}
+
+.small-muted {
+  font-size: .85rem;
+  color: var(--muted);
+}
+
+.main-padding {
+  padding: 1rem;
+}
