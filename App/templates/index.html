@@ -12,9 +12,9 @@
       <p class="small-muted mb-0">Visión rápida de tus finanzas</p>
     </div>
     <div>
-      <button class="btn btn-primary btn-sm">
+      <a class="btn btn-primary btn-sm" href="{{ url_for('nueva_transaccion') }}" >
         <i class="fa-solid fa-plus me-1"></i> Nueva transacción
-      </button>
+      </a>
     </div>
   </div>
 </section>
@@ -133,3 +133,15 @@
 </section>
 
 {% endblock %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+

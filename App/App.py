@@ -1,5 +1,5 @@
 # Importar librerías necesarias
-from flask import Flask, render_template, redirect, url_for, request, session
+from flask import Flask, render_template, redirect, url_for, request, session, flash, get_flashed_messages
 import mysql.connector           # Para conexión con MySQL
 from dotenv import load_dotenv   # Para leer el archivo .env
 import os
@@ -82,6 +82,7 @@ def login():
 @app.route("/transaccion", methods=["GET", "POST"])
 @login_required
 def nueva_transaccion():
+
     # Obtener cuentas del usuario para el select
     cursor.execute("SELECT * FROM cuenta WHERE id_usuario = %s", (current_user.id,))
     cuentas = cursor.fetchall()
@@ -100,9 +101,9 @@ def nueva_transaccion():
 
         # Insertar en la tabla transaccion
         cursor.execute("""
-            INSERT INTO transaccion (id_cuenta, tipo, categoria, monto, fecha, id_categoria, created_at)
-            VALUES (%s, %s, %s, %s, %s, %s, NOW())
-        """, (id_cuenta, tipo, categoria, monto, fecha, id_categoria))
+            INSERT INTO transaccion (id_cuenta, tipo, categoria, monto, fecha, id_categoria, id_usuario, creado_en)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, NOW())
+        """, (id_cuenta, tipo, categoria, monto, fecha, id_categoria, current_user.id))
         db.commit()
 
         # Actualizar saldo de la cuenta
@@ -115,7 +116,7 @@ def nueva_transaccion():
         flash("Transacción registrada correctamente.", "success")
         return redirect(url_for("index"))
 
-    return render_template("nueva_transaccion.html", cuentas=cuentas, categorias=categorias)
+    return render_template("transaccion.html", cuentas=cuentas, categorias=categorias, datetime=datetime)
 
 # ----------------------------
 # Ruta de registro de usuarios
