@@ -1,0 +1,22 @@
+# Entornos virtuales
+Desarrollo/
+venv/
+.env/
+.venv/
+
+# Archivos compilados
+__pycache__/
+*.pyc
+*.pyo
+
+# Config del sistema
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Variables sensibles
+.env
+*.sqlite3
