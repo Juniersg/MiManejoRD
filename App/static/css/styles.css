@@ -42,3 +42,20 @@ body {
   border-color: var(--accent);
   box-shadow: 0 0 0 0.2rem rgba(43,138,239,0.25);
 }
+
+/* Login y registro */
+.login-card {
+  max-width: 400px;
+  width: 100%;
+  border-radius: 15px;
+  background-color: #ffffff;
+}
+
+body {
+  background: linear-gradient(135deg, #e0f0ff 0%, #ffffff 100%);
+}
+
+.login-card input.form-control:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.2rem rgba(43,138,239,0.25);
+}

@@ -48,10 +48,10 @@ class Usuario(UserMixin):
 # ----------------------------
 @login_manager.user_loader
 def load_user(user_id):
-    cursor.execute("SELECT * FROM usuario WHERE id = %s", (user_id,))
+    cursor.execute("SELECT * FROM usuario WHERE id_usuario = %s", (user_id,))
     user = cursor.fetchone()
     if user:
-        return Usuario(user["id"], user["nombre"], user["email"], user["rol"])
+        return Usuario(user["id_usuario"], user["nombre"], user["email"], user["rol"])
     return None
 
 # ----------------------------
@@ -68,12 +68,41 @@ def login():
         user = cursor.fetchone()
 
         if user and bcrypt.checkpw(password, user["password"].encode("utf-8")):
-            login_user(Usuario(user["id"], user["nombre"], user["email"], user["rol"]))
+            login_user(Usuario(user["id_usuario"], user["nombre"], user["email"], user["rol"]))
             return redirect(url_for("index"))
         else:
             error = "Usuario o contraseña incorrectos"  # <-- Flag de error
 
     return render_template("login.html", error=error)
+
+# ----------------------------
+# Ruta de registro de usuarios
+# ----------------------------
+@app.route("/registro", methods=["GET", "POST"])
+def registro():
+    if request.method == "POST":
+        nombre = request.form["nombre"]
+        email = request.form["email"]
+        password = request.form["password"].encode("utf-8")
+        rol = request.form["rol"]  # 'admin' o 'usuario'
+
+        # Hashear la contraseña
+        hashed_pass = bcrypt.hashpw(password, bcrypt.gensalt()).decode("utf-8")
+
+        # Insertar en la base de datos
+        try:
+            cursor.execute(
+                "INSERT INTO usuarios (nombre, email, password, rol) VALUES (%s, %s, %s, %s)",
+                (nombre, email, hashed_pass, rol)
+            )
+            db.commit()
+            return redirect(url_for("login"))
+        except mysql.connector.Error as e:
+            error_msg = f"Error al crear el usuario: {str(e)}"
+            return render_template("registro.html", error=error_msg)
+
+    # Si GET, mostrar el formulario
+    return render_template("registro.html")
 
 
 # ----------------------------
@@ -94,7 +123,7 @@ def index():
     user_id = current_user.id  # Obtener ID del usuario logueado
 
     # Consultar saldo total de usuario en la base de datos
-    cursor.execute("SELECT SUM(monto) as saldo_total FROM transacciones WHERE usuario_id = %s", (user_id,))
+    cursor.execute("SELECT SUM(monto) as saldo_total FROM transaccion WHERE id_usuario = %s", (user_id,))
     saldo = cursor.fetchone()
     saldo_total = saldo["saldo_total"] if saldo["saldo_total"] else 0  # Si no hay saldo, poner 0
 
