@@ -1,16 +1,112 @@
-from flask import Flask, render_template
+# Importar librerías necesarias
+from flask import Flask, render_template, redirect, url_for, request, session
+import mysql.connector           # Para conexión con MySQL
+from dotenv import load_dotenv   # Para leer el archivo .env
+import os
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+import bcrypt                   # Para encriptar contraseñas
 
+# ----------------------------
+# Cargar variables de entorno
+# ----------------------------
+load_dotenv()  # Lee las variables definidas en .env
+
+# Crear la aplicación Flask
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY")  # Clave secreta para sesiones
 
-@app.route('/')
+# ----------------------------
+# Configuración de Flask-Login
+# ----------------------------
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"  # Redirige al login si no está autenticado
+
+# ----------------------------
+# Conexión a la base de datos MySQL
+# ----------------------------
+db = mysql.connector.connect(
+    host=os.getenv("MYSQL_HOST"),
+    user=os.getenv("MYSQL_USER"),
+    password=os.getenv("MYSQL_PASSWORD"),
+    database=os.getenv("MYSQL_DB")
+)
+cursor = db.cursor(dictionary=True)  # Diccionario para obtener columnas por nombre
+
+# ----------------------------
+# Modelo de usuario para Flask-Login
+# ----------------------------
+class Usuario(UserMixin):
+    def __init__(self, id, nombre, email, rol):
+        self.id = id
+        self.nombre = nombre
+        self.email = email
+        self.rol = rol
+
+# ----------------------------
+# Función para cargar usuario desde Flask-Login
+# ----------------------------
+@login_manager.user_loader
+def load_user(user_id):
+    cursor.execute("SELECT * FROM usuario WHERE id = %s", (user_id,))
+    user = cursor.fetchone()
+    if user:
+        return Usuario(user["id"], user["nombre"], user["email"], user["rol"])
+    return None
+
+# ----------------------------
+# Ruta de login
+# ----------------------------
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    error = None
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"].encode("utf-8")
+
+        cursor.execute("SELECT * FROM usuario WHERE email = %s", (email,))
+        user = cursor.fetchone()
+
+        if user and bcrypt.checkpw(password, user["password"].encode("utf-8")):
+            login_user(Usuario(user["id"], user["nombre"], user["email"], user["rol"]))
+            return redirect(url_for("index"))
+        else:
+            error = "Usuario o contraseña incorrectos"  # <-- Flag de error
+
+    return render_template("login.html", error=error)
+
+
+# ----------------------------
+# Ruta de logout
+# ----------------------------
+@app.route("/logout")
+@login_required  # Solo usuarios autenticados pueden cerrar sesión
+def logout():
+    logout_user()
+    return redirect(url_for("login"))
+
+# ----------------------------
+# Dashboard principal
+# ----------------------------
+@app.route("/")
+@login_required  # Solo usuarios autenticados pueden acceder
 def index():
+    user_id = current_user.id  # Obtener ID del usuario logueado
+
+    # Consultar saldo total de usuario en la base de datos
+    cursor.execute("SELECT SUM(monto) as saldo_total FROM transacciones WHERE usuario_id = %s", (user_id,))
+    saldo = cursor.fetchone()
+    saldo_total = saldo["saldo_total"] if saldo["saldo_total"] else 0  # Si no hay saldo, poner 0
+
+    # Pasar datos al template
     data = {
-        'Titulo': 'Index',
-        'Porcentaje': 34 / 100
+        'Titulo': 'Dashboard',
+        'SaldoTotal': saldo_total
     }
-    return render_template('index.html', data = data)
+    return render_template("index.html", data=data)
 
-
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
-
+# ----------------------------
+# Ejecutar la aplicación
+# ----------------------------
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)  # Ejecuta el servidor Flask

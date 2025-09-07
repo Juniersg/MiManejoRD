@@ -22,3 +22,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  // ----------------------------
+  // Modal de error de login
+  // ----------------------------
+  const body = document.querySelector("body");
+  const error = body.dataset.error;
+
+  if (error) {
+    const modalEl = document.getElementById('errorModal');
+    const modalBody = modalEl.querySelector('.modal-body');
+    modalBody.textContent = error; // llenar el mensaje de error
+
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+  }
+});
