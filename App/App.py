@@ -5,6 +5,7 @@ from dotenv import load_dotenv   # Para leer el archivo .env
 import os
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import bcrypt                   # Para encriptar contraseñas
+from datetime import datetime
 
 # ----------------------------
 # Cargar variables de entorno
@@ -74,6 +75,47 @@ def login():
             error = "Usuario o contraseña incorrectos"  # <-- Flag de error
 
     return render_template("login.html", error=error)
+  
+# ----------------------------
+# Ruta para registrar nuevas transacciones
+# ---------------------------- 
+@app.route("/transaccion", methods=["GET", "POST"])
+@login_required
+def nueva_transaccion():
+    # Obtener cuentas del usuario para el select
+    cursor.execute("SELECT * FROM cuenta WHERE id_usuario = %s", (current_user.id,))
+    cuentas = cursor.fetchall()
+
+    # Obtener categorías
+    cursor.execute("SELECT * FROM categoria")
+    categorias = cursor.fetchall()
+
+    if request.method == "POST":
+        id_cuenta = request.form["id_cuenta"]
+        tipo = request.form["tipo"]
+        categoria = request.form["categoria"]
+        id_categoria = request.form.get("id_categoria") or None
+        monto = request.form["monto"]
+        fecha = request.form["fecha"] or datetime.today().strftime('%Y-%m-%d')
+
+        # Insertar en la tabla transaccion
+        cursor.execute("""
+            INSERT INTO transaccion (id_cuenta, tipo, categoria, monto, fecha, id_categoria, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s, NOW())
+        """, (id_cuenta, tipo, categoria, monto, fecha, id_categoria))
+        db.commit()
+
+        # Actualizar saldo de la cuenta
+        if tipo == "ingreso":
+            cursor.execute("UPDATE cuenta SET saldo_actual = saldo_actual + %s WHERE id_cuenta = %s", (monto, id_cuenta))
+        else:
+            cursor.execute("UPDATE cuenta SET saldo_actual = saldo_actual - %s WHERE id_cuenta = %s", (monto, id_cuenta))
+        db.commit()
+
+        flash("Transacción registrada correctamente.", "success")
+        return redirect(url_for("index"))
+
+    return render_template("nueva_transaccion.html", cuentas=cuentas, categorias=categorias)
 
 # ----------------------------
 # Ruta de registro de usuarios
