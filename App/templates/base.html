@@ -33,6 +33,22 @@
           <li class="nav-item"><a class="nav-link" href="#">Reportes</a></li>
         </ul>
       </div>
+      <div class="collapse navbar-collapse" id="mainNav">
+    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+      {% if current_user.is_authenticated %}
+        <li class="nav-item d-flex align-items-center me-3">
+          <i class="fa-solid fa-user me-1"></i> {{ current_user.nombre }}
+        </li>
+        <li class="nav-item">
+          <a class="btn btn-outline-danger btn-sm" href="{{ url_for('logout') }}">
+            <i class="fa-solid fa-right-from-bracket me-1"></i> Cerrar sesión
+          </a>
+        </li>
+      {% else %}
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Iniciar sesión</a></li>
+      {% endif %}
+    </ul>
+  </div>
     </nav>
   </header>
 
