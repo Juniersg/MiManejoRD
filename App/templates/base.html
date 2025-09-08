@@ -32,8 +32,7 @@
           <li class="nav-item"><a class="nav-link" href="#">Deudas</a></li>
           <li class="nav-item"><a class="nav-link" href="#">Reportes</a></li>
         </ul>
-      </div>
-      {% if current_user.is_authenticated %}
+        {% if current_user.is_authenticated %}
     <li class="nav-item d-flex align-items-center me-3">
       <i class="fa-solid fa-user me-1"></i> {{ current_user.nombre }}
     </li>
@@ -45,6 +44,7 @@
 {% else %}
     <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Iniciar sesión</a></li>
 {% endif %}
+      </div>
 
     </nav>
   </header>
