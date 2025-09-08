@@ -176,9 +176,16 @@ def index():
         'SaldoTotal': saldo_total
     }
     return render_template("index.html", data=data)
+  
+# ----------------------------
+# Manejo de errores pagina no encontrada
+# ----------------------------  
+def Pagina_no_encontrada(error):
+    return render_template('404.html'),404
 
 # ----------------------------
 # Ejecutar la aplicación
 # ----------------------------
 if __name__ == "__main__":
+    app.register_error_handler(404,Pagina_no_encontrada)
     app.run(host="0.0.0.0", port=5000, debug=True)  # Ejecuta el servidor Flask

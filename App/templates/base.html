@@ -33,28 +33,39 @@
           <li class="nav-item"><a class="nav-link" href="#">Reportes</a></li>
         </ul>
       </div>
-      <div class="collapse navbar-collapse" id="mainNav">
-    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
       {% if current_user.is_authenticated %}
-        <li class="nav-item d-flex align-items-center me-3">
-          <i class="fa-solid fa-user me-1"></i> {{ current_user.nombre }}
-        </li>
-        <li class="nav-item">
-          <a class="btn btn-outline-danger btn-sm" href="{{ url_for('logout') }}">
-            <i class="fa-solid fa-right-from-bracket me-1"></i> Cerrar sesión
-          </a>
-        </li>
-      {% else %}
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Iniciar sesión</a></li>
-      {% endif %}
-    </ul>
-  </div>
+    <li class="nav-item d-flex align-items-center me-3">
+      <i class="fa-solid fa-user me-1"></i> {{ current_user.nombre }}
+    </li>
+    <li class="nav-item">
+      <a class="btn btn-outline-danger btn-sm" href="{{ url_for('logout') }}">
+        <i class="fa-solid fa-right-from-bracket me-1"></i> Cerrar sesión
+      </a>
+    </li>
+{% else %}
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Iniciar sesión</a></li>
+{% endif %}
+
     </nav>
   </header>
 
   <!-- CONTENIDO -->
   <main class="container main-padding" role="main">
+
+     <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
     {% block content %}{% endblock %}
+    
   </main>
 
   <!-- FOOTER -->
